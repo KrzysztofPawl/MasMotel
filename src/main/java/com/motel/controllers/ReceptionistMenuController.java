@@ -172,8 +172,47 @@ public class ReceptionistMenuController {
             clearFieldsAfter1Second();
         });
 
+        searchGuestButton.setOnAction(actionEvent -> {
+            searchForGuest();
+            clearFieldsAfter1Second();
+        });
+
+
+        //Manage Additional Services - Not implemented yet
+        editAdditionalServiceButton.setOnAction(actionEvent -> notImplemented());
+        addAdditionalServiceButton.setOnAction(actionEvent -> notImplemented());
+        changeAdditionalServiceStatusButton.setOnAction(actionEvent -> notImplemented());
+
         menuHelpItem.setOnAction(event -> InfoPopper.showInfo("Help", HELP_MESSAGE));
         menuClearItem.setOnAction(event -> clearFields());
+    }
+
+    // ReceptionistMenuController.java
+
+    @FXML
+    private void searchForGuest() {
+        try {
+            String pesel = peselFieldSearchGuest.getText();
+            if (validatePesel(pesel)) {
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GuestDetailsView.fxml"));
+            loader.setControllerFactory(MotelSystemApplication.getContext()::getBean);
+            Parent root = loader.load();
+
+            GuestDetailsController controller = loader.getController();
+            controller.loadGuestDetails(pesel);
+
+            Stage stage = new Stage();
+            stage.setTitle("Guest Details");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (Exception e) {
+            log.error("Error while opening Guest Details View", e);
+            AlertPopper.showErrorAlert("Error while opening Guest Details View: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -371,6 +410,7 @@ public class ReceptionistMenuController {
             }
 
             reservationService.markReservationAsDeletedAndDeleteInvoices(id);
+            reservationService.clearRoomAssignmentForReservation(id);
             InfoPopper.showInfo("Reservation deleted!","Reservation with ID " + id +
                     " has been deleted, and associated invoices have been removed.");
         } catch (Exception e) {
@@ -415,6 +455,10 @@ public class ReceptionistMenuController {
             return true;
         }
         return false;
+    }
+
+    private void notImplemented() {
+        AlertPopper.showErrorAlert("This feature is not implemented yet :(");
     }
 
     private void clearFieldsAfter1Second() {

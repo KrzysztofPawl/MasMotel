@@ -37,6 +37,11 @@ public class GuestServiceImpl implements GuestService {
             log.warn("Guest not found: {}", pesel);
             throw new DataNotFoundException("Guest not found: " + pesel);
         }
+        if (result.isDeleted()) {
+            log.warn("Guest is deleted: {}", pesel);
+            throw new DataNotFoundException("Guest is deleted: " + pesel);
+        }
+
         log.info("Guest found: {}", result);
         return result;
     }
