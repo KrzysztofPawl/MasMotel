@@ -41,8 +41,8 @@ public class RoomTraits {
         if(multiPersonRoom != null && singleRoom != null) {
             throw new IllegalRoomConfigurationException("Room cannot be both multi person and single person");
         }
-        if(multiPersonRoom != null && standardRoom != null) {
-            throw new IllegalRoomConfigurationException("Room cannot be both multi person and standard");
+        if(premiumRoom != null && standardRoom != null) {
+            throw new IllegalRoomConfigurationException("Room cannot be both premium and standard");
         }
         if(multiPersonRoom == null && singleRoom == null && standardRoom == null && premiumRoom == null) {
             throw new IllegalRoomConfigurationException("Room must be either multi person, single person, standard or premium");

@@ -21,5 +21,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     @NonNull
     boolean existsById(@NonNull Integer id);
-
 }

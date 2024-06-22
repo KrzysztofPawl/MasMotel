@@ -71,9 +71,4 @@ public class Reservation {
         this.isDeleted = true;
         this.status = ReservationStatus.DELETED;
     }
-
-    public Invoice getInvoice() {
-        return invoices.stream().findFirst().orElse(null);
-    }
-
 }

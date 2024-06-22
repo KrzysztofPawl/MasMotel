@@ -1,7 +1,6 @@
 package com.motel.service;
 
 import com.motel.exception.DataNotFoundException;
-import com.motel.interfaces.service.InvoiceService;
 import com.motel.interfaces.service.RoomService;
 import com.motel.model.Invoice;
 import com.motel.model.Room;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

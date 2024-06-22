@@ -45,5 +45,4 @@ public class Invoice {
         this.paymentDate = LocalDate.now();
         this.paymentMethod = paymentMethod;
     }
-
 }

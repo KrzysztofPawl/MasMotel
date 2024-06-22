@@ -142,7 +142,6 @@ public class CreateGuestController {
             return;
         }
 
-
         Person person = new Person();
         person.setName(nameProperty.get());
         person.setSurname(surnameProperty.get());
@@ -256,6 +255,7 @@ public class CreateGuestController {
         }
         return false;
     }
+
     private void clearFields() {
         nameField.clear();
         surnameField.clear();

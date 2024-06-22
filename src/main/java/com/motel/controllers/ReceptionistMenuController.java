@@ -187,8 +187,6 @@ public class ReceptionistMenuController {
         menuClearItem.setOnAction(event -> clearFields());
     }
 
-    // ReceptionistMenuController.java
-
     @FXML
     private void searchForGuest() {
         try {

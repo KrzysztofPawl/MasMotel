@@ -98,6 +98,4 @@ public class AddInvoiceController {
         modifyReservationController.setInvoiceGeneratedCheckBox(true);
         closeWindow();
     }
-
-
 }

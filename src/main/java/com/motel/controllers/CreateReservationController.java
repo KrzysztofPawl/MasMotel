@@ -135,7 +135,7 @@ public class CreateReservationController {
 
         createReservationButton.setOnAction(event -> {
             try {
-                log.debug("Creating reservation...");
+                log.info("Creating reservation...");
                 validateFields();
                 fetchDates();
                 validateDates();

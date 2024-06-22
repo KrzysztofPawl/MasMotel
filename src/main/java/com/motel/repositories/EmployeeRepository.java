@@ -17,6 +17,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @NonNull
     Employee save(@NonNull Employee employee);
-
-
 }

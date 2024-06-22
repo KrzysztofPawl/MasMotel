@@ -86,6 +86,4 @@ public class GuestServiceImpl implements GuestService {
         return guestRepository.findGuestByPersonPesel(pesel)
                 .map(Guest::getRegistrationPlateNumber);
     }
-
-
 }
