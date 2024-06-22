@@ -43,7 +43,23 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public void deleteGuest(int id) {
+        Guest guest = guestRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Guest not found: " + id));
+        guest.softDelete();
+        guestRepository.save(guest);
+        log.info("Guest deleted: {}", guest);
 
+    }
+
+    @Override
+    public boolean isGuestDeleted(int id) {
+        var result = guestRepository.findById(id).orElse(null);
+        if (result == null) {
+            log.warn("Guest not found: {}", id);
+            throw new DataNotFoundException("Guest not found: " + id);
+        } else {
+            return result.isDeleted();
+        }
     }
 
     @Override

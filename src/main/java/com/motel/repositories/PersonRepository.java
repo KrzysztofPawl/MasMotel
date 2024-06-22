@@ -10,4 +10,6 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     Person save(@NonNull Person person);
     @NonNull
     boolean existsByPesel(@NonNull String pesel);
+    @NonNull
+    Person findPersonByPesel(@NonNull String pesel);
 }

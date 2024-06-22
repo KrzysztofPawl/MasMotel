@@ -9,6 +9,7 @@ public interface GuestService {
     Guest getGuestById(int id);
     Guest getGuestByPesel(String pesel);
     void deleteGuest(int id);
+    boolean isGuestDeleted(int id);
 
     boolean existsByPesel(String pesel);
 

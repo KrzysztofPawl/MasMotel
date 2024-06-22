@@ -4,6 +4,7 @@ import com.motel.DTO.ReservationView;
 import com.motel.MotelSystemApplication;
 import com.motel.interfaces.service.GuestService;
 import com.motel.interfaces.service.ReservationService;
+import com.motel.model.Guest;
 import com.motel.model.enums.AdditionalServiceStatus;
 import com.motel.utils.AlertPopper;
 import com.motel.utils.InfoPopper;
@@ -161,8 +162,62 @@ public class ReceptionistMenuController {
             clearFieldsAfter1Second();
         });
 
+        editGuestButton.setOnAction(actionEvent -> {
+            editGuest();
+            clearFieldsAfter1Second();
+        });
+
+        removeGuestButton.setOnAction(actionEvent -> {
+            removeGuest();
+            clearFieldsAfter1Second();
+        });
+
         menuHelpItem.setOnAction(event -> InfoPopper.showInfo("Help", HELP_MESSAGE));
         menuClearItem.setOnAction(event -> clearFields());
+    }
+
+    @FXML
+    private void removeGuest() {
+        try {
+            String pesel = peselFieldRemoveGuest.getText();
+            if (validatePesel(pesel)) {
+                return;
+            }
+
+            Guest guest = guestService.getGuestByPesel(pesel);
+            guestService.deleteGuest(guest.getId());
+
+            InfoPopper.showInfo("Guest removed!", "Guest with PESEL " + pesel + " has been removed.");
+        } catch (Exception e) {
+            log.error("Error while removing guest", e);
+            AlertPopper.showErrorAlert("Error while removing guest: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void editGuest() {
+        try {
+            String pesel = peselFieldEditGuest.getText();
+            if (validatePesel(pesel)) {
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EditGuestView.fxml"));
+            loader.setControllerFactory(MotelSystemApplication.getContext()::getBean);
+            Parent root = loader.load();
+
+            EditGuestController controller = loader.getController();
+            controller.loadGuestData(pesel);
+
+            Stage stage = new Stage();
+            stage.setTitle("Edit Guest");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (Exception e) {
+            log.error("Error while opening Edit Guest View", e);
+            AlertPopper.showErrorAlert("Error while opening Edit Guest View: " + e.getMessage());
+        }
     }
 
     @FXML

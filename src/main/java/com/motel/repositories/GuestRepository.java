@@ -15,6 +15,4 @@ public interface GuestRepository extends JpaRepository<Guest, Integer> {
     Guest save(@NonNull Guest guest);
     @NonNull
     boolean existsByPersonPesel(@NonNull String pesel);
-
-
 }

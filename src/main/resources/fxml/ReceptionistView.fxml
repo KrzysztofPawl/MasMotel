@@ -88,7 +88,7 @@
                 <TextField fx:id = "peselFieldEditGuest" layoutX="234.0" layoutY="226.0" prefHeight="28.0" prefWidth="114.0" promptText="PESEL" />
                 <Button fx:id = "editGuestButton" layoutX="357.0" layoutY="227.0" mnemonicParsing="false" text="Search" />
 
-                <TextField fx:id = "peselFieldRemoveGuest" layoutX="234.0" layoutY="331.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Guest" />
+                <TextField fx:id = "peselFieldRemoveGuest" layoutX="234.0" layoutY="331.0" prefHeight="28.0" prefWidth="114.0" promptText="PESEL" />
                 <Button fx:id = "removeGuestButton" layoutX="357.0" layoutY="332.0" mnemonicParsing="false" text="Remove" />
 
                 <!-- Texts Manage Guests Section -->

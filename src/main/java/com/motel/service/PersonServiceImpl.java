@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -37,5 +39,11 @@ public class PersonServiceImpl implements PersonService {
     public boolean existsByPesel(String pesel) {
         log.info("Checking if person exists by pesel: {}", pesel);
         return personRepository.existsByPesel(pesel);
+    }
+
+    @Override
+    public Optional<Person> getPersonByPeselNoException(String pesel) {
+        log.info("Fetching person by pesel: {}", pesel);
+        return Optional.of(personRepository.findPersonByPesel(pesel));
     }
 }
