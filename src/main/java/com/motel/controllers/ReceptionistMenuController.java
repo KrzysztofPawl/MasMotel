@@ -4,10 +4,10 @@ import com.motel.DTO.ReservationView;
 import com.motel.MotelSystemApplication;
 import com.motel.interfaces.service.GuestService;
 import com.motel.interfaces.service.ReservationService;
-import com.motel.interfaces.service.RoomService;
 import com.motel.model.enums.AdditionalServiceStatus;
 import com.motel.utils.AlertPopper;
 import com.motel.utils.InfoPopper;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,8 +30,27 @@ import java.util.List;
 public class ReceptionistMenuController {
 
     private final ReservationService reservationService;
-    private final RoomService roomService;
     private final GuestService guestService;
+
+    private static final String HELP_MESSAGE = """
+            Welcome to the Receptionist Menu!
+            Here you can manage reservations, guests, and additional services.
+                        
+            Manage Reservations:
+            - To create a new reservation, enter the guest's PESEL in the field and click the button.
+            - To view reservation details, enter the reservation ID in the field and click the button.
+            - To modify a reservation, enter the reservation ID in the field and click the button.
+            - To delete a reservation, enter the reservation ID in the field and click the button.
+            
+            Manage Guests:
+            - To create a new guest, click the button.
+            - To search for a guest, enter the guest's PESEL in the field and click the button.
+            - To edit a guest, enter the guest's PESEL in the field and click the button.
+            - To remove a guest, enter the guest's PESEL in the field and click the button.
+            
+            Manage Additional Services:
+            - Not implemented yet.
+            """;
 
     //Manage Reservations TextFields
     @FXML
@@ -137,8 +156,31 @@ public class ReceptionistMenuController {
             clearFieldsAfter1Second();
         });
 
-        menuHelpItem.setOnAction(event -> InfoPopper.showInfo("Help", "Help"));
+        createNewGuestButton.setOnAction(actionEvent -> {
+            createNewGuest();
+            clearFieldsAfter1Second();
+        });
+
+        menuHelpItem.setOnAction(event -> InfoPopper.showInfo("Help", HELP_MESSAGE));
         menuClearItem.setOnAction(event -> clearFields());
+    }
+
+    @FXML
+    private void createNewGuest() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateGuestView.fxml"));
+            loader.setControllerFactory(MotelSystemApplication.getContext()::getBean);
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Create New Guest");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.show();
+        } catch (Exception e) {
+            log.error("Error while opening Create Guest View", e);
+            AlertPopper.showErrorAlert("Error while opening Create Guest View: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -325,7 +367,7 @@ public class ReceptionistMenuController {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                clearFields();
+                Platform.runLater(this::clearFields);
                 log.info("Fields cleared");
             } catch (InterruptedException e) {
                 log.error("Error while clearing fields", e);

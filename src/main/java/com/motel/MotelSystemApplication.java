@@ -8,12 +8,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
+@Slf4j
 public class MotelSystemApplication extends Application {
 
     @Getter
@@ -37,6 +39,7 @@ public class MotelSystemApplication extends Application {
             alert.setHeaderText(null);
             alert.setContentText("An unexpected error occurred: " + e.getMessage());
             alert.showAndWait();
+            log.error("An unexpected error occurred", e);
         });
     }
 

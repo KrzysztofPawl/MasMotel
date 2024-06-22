@@ -20,7 +20,8 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public Guest saveGuest(Guest guest) {
-        return null;
+        log.info("Guest saved: {}", guest);
+        return guestRepository.save(guest);
     }
 
     @Override

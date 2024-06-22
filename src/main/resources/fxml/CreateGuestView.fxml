@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.control.MenuItem?>
+<VBox fx:controller="com.motel.controllers.CreateGuestController" prefHeight="400.0" prefWidth="640.0"
+      xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Back">
+                    <items>
+                        <MenuItem fx:id="closeMenuItem" text="Back" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="helpMenuItem" text="See Help" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Clear">
+                    <items>
+                        <MenuItem fx:id="clearMenuItem" text="Clear fields" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="331.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Text layoutX="288.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Creating Guest" textAlignment="CENTER" wrappingWidth="179.21630859375" />
+                <Separator layoutX="3.0" layoutY="22.0" prefHeight="28.0" prefWidth="779.0" />
+                <Text layoutX="127.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Personal Data" />
+                <Button fx:id="createPersonButton" layoutX="83.0" layoutY="318.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="142.0" text="Create Person">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                <Separator layoutX="2.0" layoutY="59.0" prefHeight="28.0" prefWidth="779.0" />
+                <TextField fx:id="plateNumberField" layoutX="488.0" layoutY="148.0" prefHeight="28.0" prefWidth="142.0" promptText="Plate Number" />
+                <Text layoutX="488.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Person Id">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <CheckBox fx:id="guestCreatedCheckBox" disable="true" layoutX="56.0" layoutY="426.0" mnemonicParsing="false" text="Guest Created">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </CheckBox>
+                <CheckBox fx:id="personSavedCheckBox" disable="true" layoutX="56.0" layoutY="399.0" mnemonicParsing="false" text="Person Saved in System">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </CheckBox>
+                <Text layoutX="56.0" layoutY="388.0" strokeType="OUTSIDE" strokeWidth="0.0" text="System Status">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <Text layoutX="507.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Guest system Data" />
+                <TextField fx:id="personIdField" layoutX="488.0" layoutY="103.0" prefHeight="28.0" prefWidth="142.0" promptText="Person Id" editable="false" />
+                <TextField fx:id="nameField" layoutX="62.0" layoutY="103.0" prefHeight="28.0" prefWidth="206.0" promptText="Name" />
+                <TextField fx:id="surnameField" layoutX="62.0" layoutY="141.0" prefHeight="28.0" prefWidth="206.0" promptText="Surname" />
+                <TextField fx:id="phoneNumberField" layoutX="62.0" layoutY="185.0" prefHeight="28.0" prefWidth="206.0" promptText="Phone Number" />
+                <TextField fx:id="peselField" layoutX="62.0" layoutY="265.0" prefHeight="28.0" prefWidth="206.0" promptText="PESEL" />
+                <TextField fx:id="emailField" layoutX="62.0" layoutY="224.0" prefHeight="28.0" prefWidth="206.0" promptText="email" />
+                <ProgressBar fx:id="progressBar" layoutX="53.0" layoutY="469.0" prefWidth="200.0" progress="0.0" />
+                <Text layoutX="53.0" layoutY="466.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Creation Progress">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <Button fx:id="createGuestButton" layoutX="488.0" layoutY="325.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="142.0" text="Create Guest">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                <TextField fx:id="guestIdField" layoutX="488.0" layoutY="279.0" prefHeight="28.0" prefWidth="142.0" promptText="Guest Id" editable="false"/>
+                <Text layoutX="488.0" layoutY="269.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Created Guest Id">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <Separator layoutX="365.0" layoutY="31.0" orientation="VERTICAL" prefHeight="468.0" prefWidth="25.0" />
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
