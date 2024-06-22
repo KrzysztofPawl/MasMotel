@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox fx:controller="com.motel.controllers.ReceptionistMenuController" prefHeight="400.0" prefWidth="640.0"
+      xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="menuHelpItem" text="Help" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Clear">
+                    <items>
+                        <MenuItem fx:id="menuClearItem" text="Clear Fields" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="331.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Text layoutX="230.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Motel Management System" textAlignment="CENTER" wrappingWidth="179.21630859375" />
+                <Separator layoutX="191.0" orientation="VERTICAL" prefHeight="373.0" prefWidth="39.0" />
+                <Separator layoutX="409.0" orientation="VERTICAL" prefHeight="373.0" prefWidth="39.0" />
+                <Separator layoutX="3.0" layoutY="22.0" prefHeight="28.0" prefWidth="640.0" />
+                <Separator layoutX="1.0" layoutY="73.0" prefHeight="28.0" prefWidth="640.0" />
+                <Text layoutX="51.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Manage Reservations" />
+                <Text layoutX="270.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Manage Guests" />
+                <Text layoutX="455.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Manage Additional Services" />
+
+                <!-- Manage Reservations Section -->
+                <TextField fx:id = "peselFieldSearchGuestReservation" layoutX="13.0" layoutY="122.0" prefHeight="28.0" prefWidth="114.0" promptText="PESEL" />
+                <Button fx:id = "searchGuestReservationButton" layoutX="137.0" layoutY="123.0" mnemonicParsing="false" text="Search" />
+
+                <TextField fx:id = "peselFieldCreateReservation" layoutX="13.0" layoutY="173.0" prefHeight="28.0" prefWidth="114.0" promptText="PESEL" />
+                <Button fx:id = "createReservationButton" layoutX="138.0" layoutY="174.0" mnemonicParsing="false" text="Create" />
+
+                <TextField fx:id = "modifyReservationIdField" layoutX="13.0" layoutY="226.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Reservation" />
+                <Button fx:id = "modifyReservationSearchButton" layoutX="137.0" layoutY="227.0" mnemonicParsing="false" text="Search" />
+
+                <TextField fx:id = "viewReservationDetailsIdField" layoutX="13.0" layoutY="281.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Reservation" />
+                <Button fx:id = "viewReservationDetailsSearchButton" layoutX="136.0" layoutY="282.0" mnemonicParsing="false" text="Search" />
+
+                <TextField fx:id = "deleteReservationIdField" layoutX="14.0" layoutY="331.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Reservation" />
+                <Button fx:id = "deleteReservationDeleteButton" layoutX="137.0" layoutY="332.0" mnemonicParsing="false" text="Delete" />
+
+                <!-- Texts -->
+                <Text layoutX="14.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search for Guest Reservations">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="13.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create Reservation">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="14.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modify Reservation">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+
+                <Text layoutX="15.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delete Reservation">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+
+                <!-- Manage Guests Section -->
+                <Button fx:id = "createNewGuestButton" layoutX="252.0" layoutY="105.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="126.0" text="Create new Guest" />
+
+                <TextField fx:id = "peselFieldSearchGuest" layoutX="234.0" layoutY="179.0" prefHeight="28.0" prefWidth="114.0" promptText="PESEL" />
+                <Button fx:id = "searchGuestButton" layoutX="357.0" layoutY="180.0" mnemonicParsing="false" text="Search" />
+
+                <TextField fx:id = "peselFieldEditGuest" layoutX="234.0" layoutY="226.0" prefHeight="28.0" prefWidth="114.0" promptText="PESEL" />
+                <Button fx:id = "editGuestButton" layoutX="357.0" layoutY="227.0" mnemonicParsing="false" text="Search" />
+
+                <TextField fx:id = "peselFieldRemoveGuest" layoutX="234.0" layoutY="331.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Guest" />
+                <Button fx:id = "removeGuestButton" layoutX="357.0" layoutY="332.0" mnemonicParsing="false" text="Remove" />
+
+                <!-- Texts Manage Guests Section -->
+                <Text layoutX="234.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search for Guest">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="234.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Edit Guest Data">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="235.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Remove Guest">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="13.0" layoutY="278.0" strokeType="OUTSIDE" strokeWidth="0.0" text="View Reservation Details">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+
+                <!-- Manage Additional Services Section -->
+                <TextField fx:id = "editAdditionalServiceIdField" layoutX="441.0" layoutY="122.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Additional Service">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </TextField>
+                <Button fx:id = "editAdditionalServiceButton" layoutX="565.0" layoutY="123.0" mnemonicParsing="false" text="Search" />
+
+                <TextField fx:id = "addAdditionalServiceIdField" layoutX="441.0" layoutY="173.0" prefHeight="28.0" prefWidth="114.0" promptText="Name of Service">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </TextField>
+                <Button fx:id = "addAdditionalServiceButton" layoutX="566.0" layoutY="174.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="56.0" text="Add" />
+
+
+                <TextField fx:id = "changeAdditionalServiceStatusIdField" layoutX="441.0" layoutY="281.0" prefHeight="28.0" prefWidth="114.0" promptText="ID Additional Service">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </TextField>
+                <Button fx:id = "changeAdditionalServiceStatusButton" layoutX="565.0" layoutY="285.0" mnemonicParsing="false" prefHeight="67.0" prefWidth="56.0" text="Change">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Button>
+                <ChoiceBox fx:id = "additionalServiceStatusChoiceBox" layoutX="441.0" layoutY="332.0" prefHeight="26.0" prefWidth="114.0" />
+
+                <!-- Texts Manage Additional Services Section -->
+                <Text layoutX="442.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Edit Additional Service">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="441.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Additional Service">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="441.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Additional Service Status">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <Text layoutX="442.0" layoutY="327.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pick new status">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

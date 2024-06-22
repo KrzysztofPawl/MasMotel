@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox fx:controller="com.motel.controllers.ModifyReservationController" prefHeight="400.0" prefWidth="640.0"
+      xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Exit" />
+                <Menu mnemonicParsing="false" text="Back" />
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="331.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Text layoutX="302.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Modifying Reservation" textAlignment="CENTER" wrappingWidth="179.21630859375" />
+                <Separator layoutX="3.0" layoutY="22.0" prefHeight="28.0" prefWidth="779.0" />
+                <Text layoutX="149.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Reservation details" />
+                <Button fx:id="modifyReservationButton" layoutX="23.0" layoutY="421.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="142.0" text="Modify Reservation">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                <Separator layoutX="2.0" layoutY="59.0" prefHeight="28.0" prefWidth="779.0" />
+                <TextField fx:id="numberOfNightsField" editable="false" layoutX="23.0" layoutY="251.0" prefHeight="28.0" prefWidth="142.0" promptText="Number of Nights"/>
+                <TextField fx:id="plateNumberField" layoutX="23.0" layoutY="314.0" prefHeight="28.0" prefWidth="142.0" promptText="Plate Number" />
+                <Text layoutX="24.0" layoutY="311.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registration Plate Number">
+                    <font>
+                        <Font size="10.0" />
+                    </font>
+                </Text>
+                <DatePicker fx:id="reservationDatePicker" layoutX="29.0" layoutY="93.0" prefHeight="28.0" prefWidth="142.0" promptText="Reservation Date" />
+                <DatePicker fx:id="arrivalDatePicker" layoutX="29.0" layoutY="140.0" prefHeight="28.0" prefWidth="142.0" promptText="Arrival Date" />
+                <Text layoutX="24.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of nights">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <ChoiceBox fx:id="reservationStatusChoiceBox" layoutX="23.0" layoutY="375.0" prefHeight="28.0" prefWidth="142.0" />
+                <Text layoutX="23.0" layoutY="364.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Status">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <DatePicker fx:id="leaveDatePicker" layoutX="29.0" layoutY="183.0" prefHeight="28.0" prefWidth="142.0" promptText="Leave Date" />
+                <CheckBox fx:id="invoiceGeneratedCheckBox" disable="true" layoutX="181.0" layoutY="448.0" mnemonicParsing="false" text="Invoice generated">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </CheckBox>
+                <CheckBox fx:id="savedInSystemCheckBox" disable="true" layoutX="181.0" layoutY="421.0" mnemonicParsing="false" text="Saved in System">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </CheckBox>
+                <Text layoutX="200.0" layoutY="414.0" strokeType="OUTSIDE" strokeWidth="0.0" text="System Status">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+                <TextArea fx:id="reservationDetailsTextArea" layoutX="375.0" layoutY="93.0" prefHeight="390.0" prefWidth="383.0" />
+                <Text layoutX="528.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Details" />
+                <Button fx:id="addInvoiceButton" layoutX="225.0" layoutY="93.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="117.0" text="Add Invoice">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                <TextField fx:id="invoiceIdField" layoutX="212.0" layoutY="251.0" prefHeight="28.0" prefWidth="142.0" promptText="Invoice id" />
+                <Button fx:id="payInvoiceButton" layoutX="225.0" layoutY="216.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="117.0" text="Pay Invoice">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </Button>
+                <TextField fx:id="paymentMethodField" layoutX="212.0" layoutY="293.0" prefHeight="28.0" prefWidth="142.0" promptText="Payment Method" />
+                <TextField fx:id="sumField" layoutX="212.0" layoutY="148.0" prefHeight="28.0" prefWidth="142.0" promptText="Sum" editable="false"/>
+                <TextField fx:id="amountField" layoutX="212.0" layoutY="339.0" prefHeight="28.0" prefWidth="142.0" promptText="Amount" />
+                <CheckBox fx:id="paidCheckBox" disable="true" layoutX="181.0" layoutY="475.0" mnemonicParsing="false" text="Paid">
+                    <font>
+                        <Font size="12.0" />
+                    </font>
+                </CheckBox>
+                <Text layoutX="212.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Reservation cost">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Text>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

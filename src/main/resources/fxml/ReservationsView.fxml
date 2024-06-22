@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox fx:controller="com.motel.controllers.ReservationsViewController" prefHeight="400.0" prefWidth="640.0"
+      xmlns="http://javafx.com/javafx/15" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Back">
+                    <MenuItem fx:id="menuBackItem" text="Back"/>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="331.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+            <children>
+                <Text layoutX="230.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Guest Reservations" textAlignment="CENTER" wrappingWidth="179.21630859375" />
+                <Separator layoutX="3.0" layoutY="22.0" prefHeight="28.0" prefWidth="640.0" />
+                <TableView fx:id="reservationsTableView" layoutX="20.0" layoutY="45.0" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="45">
+                    <columns>
+                        <TableColumn fx:id="idColumn" minWidth="0.0" prefWidth="50.0" text="Id" />
+                        <TableColumn fx:id="roomNumberColumn" minWidth="0.0" prefWidth="101.0" text="Room_Numbers" />
+                        <TableColumn fx:id="reservationDateColumn" prefWidth="124.0" text="Reservation_Date" />
+                        <TableColumn fx:id="arrivalDateColumn" prefWidth="103.0" text="Arrival_Date" />
+                        <TableColumn fx:id="leaveDateColumn" prefWidth="99.0" text="Leave_Date" />
+                        <TableColumn fx:id="nightsColumn" prefWidth="70.0" text="Nights" />
+                        <TableColumn fx:id="statusColumn" prefWidth="109.0" text="Status" />
+                    </columns>
+                </TableView>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
