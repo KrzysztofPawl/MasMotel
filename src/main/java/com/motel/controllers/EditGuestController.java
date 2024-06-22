@@ -140,11 +140,6 @@ public class EditGuestController {
         person.setEmail(emailProperty.get());
         person.setPesel(peselProperty.get());
 
-        validateAndSetRegistrationPlateNumber(peselProperty.get());
-
-        var guest = guestService.getGuestByPesel(peselProperty.get());
-
-
         Task<Void> editPersonTask = new Task<>() {
             @Override
             protected Void call() {
@@ -155,6 +150,8 @@ public class EditGuestController {
 
         editPersonTask.setOnSucceeded(event -> {
             changesSavedCheckBox.setSelected(true);
+            validateAndSetRegistrationPlateNumber(peselProperty.get());
+            var guest = guestService.getGuestByPesel(peselProperty.get());
             InfoPopper.showInfo("Guest updated", "Guest data has been updated with ID: " + guest.getId());
             log.info("Guest updated: {}", guest);
         });

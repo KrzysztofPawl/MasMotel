@@ -157,6 +157,11 @@ public class ModifyReservationController {
             }
 
             reservationService.saveReservation(currentReservation);
+
+            if (currentReservation.getStatus() == ReservationStatus.DELETED) {
+                reservationService.markReservationAsDeletedAndDeleteInvoices(currentReservation.getId());
+            }
+
             validateAndSetRegistrationPlateNumber(currentReservation.getGuest().getPerson().getPesel());
 
            refreshReservationDetails();
@@ -193,6 +198,7 @@ public class ModifyReservationController {
                     currentReservation.setStatus(ReservationStatus.FINISHED);
                     reservationService.saveReservation(currentReservation);
                     reservationService.clearRoomAssignmentForReservation(currentReservation.getId());
+                    reservationStatusChoiceBox.setValue(ReservationStatus.FINISHED);
                 }
 
                 refreshReservationDetails();

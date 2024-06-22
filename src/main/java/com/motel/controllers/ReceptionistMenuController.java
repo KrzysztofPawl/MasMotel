@@ -194,6 +194,11 @@ public class ReceptionistMenuController {
             if (validatePesel(pesel)) {
                 return;
             }
+            if (guestService.getGuestByPesel(pesel).isDeleted()) {
+                log.error("Guest with PESEL " + pesel + " is deleted");
+                AlertPopper.showErrorAlert("Guest with PESEL " + pesel + " is deleted");
+                return;
+            }
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GuestDetailsView.fxml"));
             loader.setControllerFactory(MotelSystemApplication.getContext()::getBean);
@@ -208,7 +213,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Guest Details View", e);
+            log.error("Error while opening Guest Details View" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Guest Details View: " + e.getMessage());
         }
     }
@@ -226,7 +231,7 @@ public class ReceptionistMenuController {
 
             InfoPopper.showInfo("Guest removed!", "Guest with PESEL " + pesel + " has been removed.");
         } catch (Exception e) {
-            log.error("Error while removing guest", e);
+            log.error("Error while removing guest" + e.getMessage());
             AlertPopper.showErrorAlert("Error while removing guest: " + e.getMessage());
         }
     }
@@ -252,7 +257,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Edit Guest View", e);
+            log.error("Error while opening Edit Guest View" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Edit Guest View: " + e.getMessage());
         }
     }
@@ -270,7 +275,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Create Guest View", e);
+            log.error("Error while opening Create Guest View" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Create Guest View: " + e.getMessage());
         }
     }
@@ -299,7 +304,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Create Reservation View");
+            log.error("Error while opening Create Reservation View" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Create Reservation View: " + e.getMessage());
         }
     }
@@ -325,7 +330,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Guest Reservations View");
+            log.error("Error while opening Guest Reservations View" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Guest Reservations View: " + e.getMessage());
         }
     }
@@ -361,7 +366,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Reservation Details View", e);
+            log.error("Error while opening Reservation Details View" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Reservation Details View: " + e.getMessage());
         }
     }
@@ -370,7 +375,21 @@ public class ReceptionistMenuController {
     private void openModifyReservationView() {
         try {
             String reservationId = modifyReservationIdField.getText();
+            int id = parseId(reservationId);
+            if (id == -1) {
+                return;
+            }
             if (validateReservationId(reservationId)) {
+                return;
+            }
+            if (reservationService.getReservationById(id).isDeleted()) {
+                log.error("Reservation with ID " + id + " is deleted");
+                AlertPopper.showErrorAlert("Reservation with ID " + id + " is deleted");
+                return;
+            }
+            if (reservationService.getReservationById(id) == null) {
+                log.error("Reservation with ID " + reservationId + " does not exist");
+                AlertPopper.showErrorAlert("Reservation with ID " + reservationId + " does not exist");
                 return;
             }
 
@@ -387,7 +406,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Modify Reservation view", e);
+            log.error("Error while opening Modify Reservation view" + e.getMessage());
             AlertPopper.showErrorAlert("Error while opening Modify Reservation view: " + e.getMessage());
         }
     }
@@ -412,7 +431,7 @@ public class ReceptionistMenuController {
             InfoPopper.showInfo("Reservation deleted!","Reservation with ID " + id +
                     " has been deleted, and associated invoices have been removed.");
         } catch (Exception e) {
-            log.error("Error while deleting reservation", e);
+            log.error("Error while deleting reservation" + e.getMessage());
             AlertPopper.showErrorAlert("Error while deleting reservation: " + e.getMessage());
         }
     }
