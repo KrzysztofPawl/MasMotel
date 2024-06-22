@@ -1,11 +1,13 @@
 package com.motel.controllers;
 
+import com.motel.exception.DataNotFoundException;
 import com.motel.interfaces.service.InvoiceService;
 import com.motel.model.Invoice;
 import com.motel.model.Reservation;
 import com.motel.model.enums.InvoiceStatus;
 import com.motel.utils.AlertPopper;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 
 @Component
 @RequiredArgsConstructor
@@ -49,7 +52,10 @@ public class AddInvoiceController {
                 return;
             }
 
-            Invoice primaryInvoice = currentReservation.getInvoices().stream().findFirst().orElseThrow(() -> new IllegalStateException("No primary invoice found"));
+            Invoice primaryInvoice = currentReservation.getInvoices().stream()
+                    .filter(invoice -> invoice.getStatus() == InvoiceStatus.OPEN)
+                    .min(Comparator.comparing(Invoice::getId))
+                    .orElseThrow(() -> new DataNotFoundException("Primary invoice not found!"));
 
             if (primaryInvoice.getSum().compareTo(amount) <= 0) {
                 AlertPopper.showErrorAlert("Amount exceeds or equals primary invoice sum!");
@@ -68,7 +74,7 @@ public class AddInvoiceController {
 
             invoiceService.saveInvoice(newInvoice);
 
-            modifyReservationController.refreshReservationDetails(true);
+            showConfirmationDialog();
             closeWindow();
         } catch (Exception e) {
             log.error("Error while creating invoice", e);
@@ -80,4 +86,18 @@ public class AddInvoiceController {
         Stage stage = (Stage) createButton.getScene().getWindow();
         stage.close();
     }
+
+    private void showConfirmationDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Invoice Created!");
+        alert.setHeaderText(null);
+        alert.setContentText("Invoice has been created successfully.");
+        alert.showAndWait();
+
+        modifyReservationController.refreshReservationDetails();
+        modifyReservationController.setInvoiceGeneratedCheckBox(true);
+        closeWindow();
+    }
+
+
 }

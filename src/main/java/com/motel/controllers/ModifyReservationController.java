@@ -1,6 +1,8 @@
 package com.motel.controllers;
 
 import com.motel.MotelSystemApplication;
+import com.motel.exception.ControllerException;
+import com.motel.exception.DataNotFoundException;
 import com.motel.interfaces.service.GuestService;
 import com.motel.interfaces.service.ReservationService;
 import com.motel.interfaces.service.InvoiceService;
@@ -11,6 +13,7 @@ import com.motel.model.RoomTraits;
 import com.motel.model.enums.InvoiceStatus;
 import com.motel.model.enums.ReservationStatus;
 import com.motel.utils.AlertPopper;
+import com.motel.utils.InfoPopper;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,7 +27,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,6 +37,24 @@ public class ModifyReservationController {
     private final ReservationService reservationService;
     private final InvoiceService invoiceService;
     private final GuestService guestService;
+
+    private static final String HELP_MESSAGE = """
+            To modify reservation:
+            1. Change arrival and leave dates.
+            2. Choose reservation status.
+            3. Click 'Modify Reservation' button.
+            
+            To pay invoice:
+            1. Enter invoice ID.
+            2. Enter payment method.
+            3. Enter amount (must match invoice sum).
+            4. Click 'Pay Invoice' button.
+            
+            To add new invoice:
+            1. Click 'Add Invoice' button.
+            2. Enter invoice sum.
+            3. Click 'Add Invoice' button.
+            """;
 
     @FXML
     private TextField numberOfNightsField;
@@ -70,16 +90,26 @@ public class ModifyReservationController {
     private CheckBox savedInSystemCheckBox;
     @FXML
     private CheckBox paidCheckBox;
+    @FXML
+    private MenuItem closeMenuItem;
+    @FXML
+    private MenuItem helpMenuItem;
+    @FXML
+    private MenuItem refreshMenuItem;
 
     private Reservation currentReservation;
-    private Invoice primaryInvoice;
-    private BigDecimal invoiceSum;
 
     @FXML
     private void initialize() {
         modifyReservationButton.setOnAction(event -> modifyReservation());
-        payInvoiceButton.setOnAction(event -> payInvoice());
+        payInvoiceButton.setOnAction(event -> {
+            payInvoice();
+            clearFields();
+        });
         addInvoiceButton.setOnAction(event -> openAddInvoiceDialog());
+        closeMenuItem.setOnAction(event -> closeWindow());
+        refreshMenuItem.setOnAction(event -> refreshReservationDetails());
+        helpMenuItem.setOnAction(event -> InfoPopper.showInfo("Help", HELP_MESSAGE));
 
         reservationStatusChoiceBox.getItems().setAll(ReservationStatus.values());
     }
@@ -87,15 +117,10 @@ public class ModifyReservationController {
     public void loadReservationDetails(int reservationId) {
         try {
             currentReservation = reservationService.getReservationById(reservationId);
-            Set<Invoice> invoices = currentReservation.getInvoices();
-            if (!invoices.isEmpty()) {
-                invoices.forEach(invoice -> invoiceSum = invoice.getSum());
-            } else {
-                invoiceSum = BigDecimal.ZERO;
-                log.warn("No invoices found for reservation with id: {}", reservationId);
-                AlertPopper.showErrorAlert("No invoices found for reservation with id: " + reservationId);
-            }
-            sumField.setText(invoiceSum.toString());
+            isReservationPaid(currentReservation);
+            blockModifyReservationButtonWhenReservationIsPaid(currentReservation);
+            blockInvoiceButtonsWhenReservationIsPaid(currentReservation);
+            refreshInvoiceSum();
 
             reservationDatePicker.setValue(currentReservation.getReservationDate());
             reservationDatePicker.setEditable(false);
@@ -104,11 +129,11 @@ public class ModifyReservationController {
             reservationStatusChoiceBox.setValue(currentReservation.getStatus());
             numberOfNightsField.setText(currentReservation.getNights().toString());
 
-            Optional<String> registrationPlateNumber = guestService.findRegistrationPlateNumberByPesel(currentReservation.getGuest().getPerson().getPesel());
+            Optional<String> registrationPlateNumber = guestService
+                    .findRegistrationPlateNumberByPesel(currentReservation.getGuest().getPerson().getPesel());
             plateNumberField.setText(registrationPlateNumber.orElse(""));
 
-            String details = formatReservationDetails(currentReservation);
-            reservationDetailsTextArea.setText(details);
+            refreshReservationDetails();
         } catch (Exception e) {
             log.error("Error while loading reservation details", e);
             AlertPopper.showErrorAlert("Error while loading reservation details: " + e.getMessage());
@@ -132,12 +157,10 @@ public class ModifyReservationController {
             }
 
             reservationService.saveReservation(currentReservation);
+            validateAndSetRegistrationPlateNumber(currentReservation.getGuest().getPerson().getPesel());
 
-            String details = formatReservationDetails(currentReservation);
-            reservationDetailsTextArea.setText(details);
-
-            savedInSystemCheckBox.setSelected(true);
-
+           refreshReservationDetails();
+           savedInSystemCheckBox.setSelected(true);
         } catch (Exception e) {
             log.error("Error while modifying reservation", e);
             AlertPopper.showErrorAlert("Error while modifying reservation: " + e.getMessage());
@@ -147,13 +170,23 @@ public class ModifyReservationController {
     private void payInvoice() {
         try {
             int invoiceId = parseId(invoiceIdField.getText());
-            BigDecimal amount = new BigDecimal(amountField.getText());
+            if (invoiceId == -1) {
+                return;
+            }
+
+            validateIfInvoiceIdExists(invoiceId);
+            checkIfInvoiceIsPaid(invoiceId);
+
+            var amountFromField = amountField.getText();
+            validateAmountFromString(amountFromField);
+            BigDecimal amount = new BigDecimal(amountFromField);
             String paymentMethod = paymentMethodField.getText();
 
             Invoice invoice = invoiceService.getInvoiceById(invoiceId);
             if (invoice.getSum().compareTo(amount) == 0) {
                 invoice.markAsPaid(paymentMethod);
                 invoiceService.saveInvoice(invoice);
+                refreshReservationDetails();
 
                 if (currentReservation.getInvoices().stream().allMatch(inv -> inv.getStatus() == InvoiceStatus.PAID)) {
                     paidCheckBox.setSelected(true);
@@ -162,12 +195,27 @@ public class ModifyReservationController {
                 }
 
                 refreshReservationDetails();
+                InfoPopper.showInfo("Success", "Invoice paid successfully!");
             } else {
                 AlertPopper.showErrorAlert("Amount does not match invoice sum!");
             }
         } catch (Exception e) {
             log.error("Error while paying invoice", e);
             AlertPopper.showErrorAlert("Error while paying invoice: " + e.getMessage());
+        }
+    }
+
+    private void checkIfInvoiceIsPaid(int invoiceId) {
+        if (currentReservation.getInvoices().stream().anyMatch(invoice -> invoice.getId() == invoiceId && invoice.getStatus() == InvoiceStatus.PAID)) {
+            AlertPopper.showErrorAlert("Invoice with ID " + invoiceId + " is already paid!");
+            throw new IllegalStateException("Invoice with ID " + invoiceId + " is already paid!");
+        }
+    }
+
+    private void validateIfInvoiceIdExists(int invoiceId) {
+        if (currentReservation.getInvoices().stream().noneMatch(invoice -> invoice.getId() == invoiceId)) {
+            AlertPopper.showErrorAlert("Invoice with ID " + invoiceId + " does not exist!");
+            throw new DataNotFoundException("Invoice with ID " + invoiceId + " does not exist!");
         }
     }
 
@@ -198,17 +246,22 @@ public class ModifyReservationController {
     private String formatReservationDetails(Reservation reservation) {
         StringBuilder sb = new StringBuilder();
         sb.append("Reservation Date: ").append(reservation.getReservationDate()).append("\n");
+        sb.append("Reservation Status: ").append(reservation.getStatus()).append("\n");
         sb.append("Arrival Date: ").append(reservation.getArrivalDate()).append("\n");
         sb.append("Leave Date: ").append(reservation.getLeaveDate()).append("\n");
         sb.append("Nights: ").append(reservation.getNights()).append("\n");
         sb.append("Room Numbers: ").append(reservation.getRooms().stream().map(room -> room.getNumber().toString()).collect(Collectors.joining(", "))).append("\n");
         sb.append("Room Details: ").append(reservation.getRooms().stream().map(this::formatRoomDetails).collect(Collectors.joining(", "))).append("\n");
-
+        sb.append("------\n");
+        sb.append("Guest: ").append(reservation.getGuest().getPerson().getName()).append(" ").append(reservation.getGuest().getPerson().getSurname()).append("\n");
+        sb.append("------\n");
+        sb.append("Invoices:\n");
         reservation.getInvoices().forEach(invoice -> {
             sb.append("Invoice Id: ").append(invoice.getId()).append("\n");
             sb.append("Invoice Status: ").append(invoice.getStatus()).append("\n");
             sb.append("Invoice Sum: ").append(invoice.getSum()).append("\n");
             sb.append("Invoice Date of Issue: ").append(invoice.getDateOfIssue()).append("\n");
+            sb.append("------\n");
         });
 
         return sb.toString();
@@ -233,6 +286,12 @@ public class ModifyReservationController {
         return sb.toString();
     }
 
+    private void isReservationPaid(Reservation currentReservation){
+        if (currentReservation.getInvoices().stream().allMatch(invoice -> invoice.getStatus() == InvoiceStatus.PAID)) {
+            paidCheckBox.setSelected(true);
+        }
+    }
+
     private int parseId(String id) {
         try {
             return Integer.parseInt(id);
@@ -242,17 +301,71 @@ public class ModifyReservationController {
         }
     }
 
-    private void refreshReservationDetails() {
-        refreshReservationDetails(false);
+    private void blockModifyReservationButtonWhenReservationIsPaid(Reservation currentReservation) {
+        if (currentReservation.getInvoices().stream()
+                .allMatch(invoice -> invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.CANCELED)) {
+            modifyReservationButton.setDisable(true);
+        }
     }
 
-    public void refreshReservationDetails(boolean invoiceGenerated) {
+    private void blockInvoiceButtonsWhenReservationIsPaid(Reservation currentReservation) {
+        if (currentReservation.getInvoices().stream()
+                .allMatch(invoice -> invoice.getStatus() == InvoiceStatus.PAID || invoice.getStatus() == InvoiceStatus.CANCELED)) {
+            addInvoiceButton.setDisable(true);
+            payInvoiceButton.setDisable(true);
+        }
+    }
+
+    public void refreshReservationDetails() {
+        currentReservation = reservationService.getReservationById(currentReservation.getId());
         String details = formatReservationDetails(currentReservation);
         reservationDetailsTextArea.setText(details);
 
-        invoiceGeneratedCheckBox.setSelected(invoiceGenerated || !currentReservation.getInvoices().isEmpty());
+        refreshInvoiceSum();
     }
 
+    private void validateAndSetRegistrationPlateNumber(String guestPesel) {
+        if (plateNumberField != null) {
+            var registrationPlateNumber = plateNumberField.getText().trim();
+            if (!registrationPlateNumber.isEmpty()) {
+                if (registrationPlateNumber.length() < 5 || registrationPlateNumber.length() > 7) {
+                    throw new ControllerException("Registration plate number must be between 5 and 7 characters long");
+                }
+                guestService.updateGuestRegistrationPlateNumber(guestPesel, registrationPlateNumber);
+            }
+        }
+    }
+
+    private void validateAmountFromString(String amountStr) {
+        try {
+            new BigDecimal(amountStr);
+        } catch (NumberFormatException e) {
+            AlertPopper.showErrorAlert("Amount must be a number!");
+        }
+    }
+
+    private void refreshInvoiceSum() {
+        BigDecimal totalSum = currentReservation.getInvoices().stream()
+                .filter(invoice -> invoice.getStatus() != InvoiceStatus.CANCELED)
+                .filter(invoice -> invoice.getStatus() != InvoiceStatus.PAID)
+                .map(Invoice::getSum)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        log.info("Total sum: {}", totalSum);
+        sumField.setText(totalSum.toString());
+    }
+
+    private void clearFields() {
+        invoiceIdField.clear();
+        paymentMethodField.clear();
+        amountField.clear();
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) closeMenuItem.getParentPopup().getOwnerWindow();
+        stage.close();
+    }
+
+    public void setInvoiceGeneratedCheckBox(boolean isSelected) {
+        invoiceGeneratedCheckBox.setSelected(isSelected);
+    }
 }
-
-

@@ -245,12 +245,9 @@ public class ReceptionistMenuController {
         }
     }
 
-
-
     private void setAdditionalServiceStatusChoiceBox(ActionEvent actionEvent) {
         AdditionalServiceStatus additionalServiceStatus = additionalServiceStatusChoiceBox.getValue();
     }
-
     private boolean validateReservationId(String id) {
         if (id == null || id.trim().isEmpty()) {
             log.error("Reservation ID is empty");
