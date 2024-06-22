@@ -8,8 +8,10 @@ import java.util.List;
 public interface ReservationService {
     Reservation saveReservation(Reservation reservation);
     Reservation getReservationById(int id);
-    List<Reservation> getGuestReservations(String pesel);
+    Reservation getReservationByIdNotDeleted(int id);
+    List<Reservation> getGuestReservationsNotDeleted(String pesel);
     Reservation changeReservationStatus(int id, ReservationStatus status);
     boolean existsById(int id);
     void markReservationAsDeletedAndDeleteInvoices(int id);
+    void clearRoomAssignmentForReservation(int id);
 }

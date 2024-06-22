@@ -26,7 +26,7 @@ public class ReservationDetailsController {
 
     public void loadReservationDetails(int reservationId) {
         try {
-            Reservation reservation = reservationService.getReservationById(reservationId);
+            Reservation reservation = reservationService.getReservationByIdNotDeleted(reservationId);
             String details = formatReservationDetails(reservation);
             reservationDetailsTextArea.setText(details);
         } catch (Exception e) {
@@ -43,10 +43,18 @@ public class ReservationDetailsController {
         sb.append("Nights: ").append(reservation.getNights()).append("\n");
         sb.append("Room Numbers: ").append(reservation.getRooms().stream().map(room -> room.getNumber().toString()).collect(Collectors.joining(", "))).append("\n");
         sb.append("Room Details: ").append(reservation.getRooms().stream().map(this::formatRoomDetails).collect(Collectors.joining(", "))).append("\n");
-        sb.append("Invoice Id: ").append(reservation.getInvoice().getId()).append("\n");
-        sb.append("Invoice Status: ").append(reservation.getInvoice().getStatus()).append("\n");
-        sb.append("Invoice Sum: ").append(reservation.getInvoice().getSum()).append("\n");
-        sb.append("Invoice Date of Issue: ").append(reservation.getInvoice().getDateOfIssue()).append("\n");
+        sb.append("Status: ").append(reservation.getStatus()).append("\n");
+        sb.append("------\n");
+        sb.append("Guest: ").append(reservation.getGuest().getPerson().getName()).append(" ").append(reservation.getGuest().getPerson().getSurname()).append("\n");
+        sb.append("------\n");
+        sb.append("Invoices: \n");
+        reservation.getInvoices().forEach(invoice -> {
+            sb.append("Invoice Id: ").append(invoice.getId()).append("\n");
+            sb.append("Invoice Status: ").append(invoice.getStatus()).append("\n");
+            sb.append("Invoice Sum: ").append(invoice.getSum()).append("\n");
+            sb.append("Invoice Date of Issue: ").append(invoice.getDateOfIssue()).append("\n");
+            sb.append("------\n");
+        });
         return sb.toString();
     }
 

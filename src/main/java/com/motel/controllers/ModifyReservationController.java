@@ -116,7 +116,7 @@ public class ModifyReservationController {
 
     public void loadReservationDetails(int reservationId) {
         try {
-            currentReservation = reservationService.getReservationById(reservationId);
+            currentReservation = reservationService.getReservationByIdNotDeleted(reservationId);
             isReservationPaid(currentReservation);
             blockModifyReservationButtonWhenReservationIsPaid(currentReservation);
             blockInvoiceButtonsWhenReservationIsPaid(currentReservation);
@@ -192,6 +192,7 @@ public class ModifyReservationController {
                     paidCheckBox.setSelected(true);
                     currentReservation.setStatus(ReservationStatus.FINISHED);
                     reservationService.saveReservation(currentReservation);
+                    reservationService.clearRoomAssignmentForReservation(currentReservation.getId());
                 }
 
                 refreshReservationDetails();

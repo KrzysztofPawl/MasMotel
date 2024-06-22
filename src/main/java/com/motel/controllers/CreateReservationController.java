@@ -20,6 +20,7 @@ import com.motel.utils.InfoPopper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +39,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -121,6 +123,7 @@ public class CreateReservationController {
         reservationDate = LocalDate.now();
         log.debug("Setting reservation date to: {}", reservationDate);
         reservationDatePicker.setValue(reservationDate);
+        fetchPlateNumberWithRetries(3, 1000);
 
         reservationStatusChoiceBox.getItems().addAll(ReservationStatus.values());
         reservationStatusChoiceBox.setOnAction(this::setReservationStatus);
@@ -190,7 +193,8 @@ public class CreateReservationController {
                 })
                 .collect(Collectors.toSet());
         reservation.setRooms(rooms);
-        reservationService.saveReservation(reservation);
+        var createdReservation = reservationService.saveReservation(reservation);
+        InfoPopper.showInfo("Reservation Created", "Reservation created with " + createdReservation.getId() + "ID for guest: " + guestPesel);
         rooms.forEach(roomService::saveRoom);
     }
 
@@ -257,6 +261,53 @@ public class CreateReservationController {
                 guestService.updateGuestRegistrationPlateNumber(guestPesel, registrationPlateNumber);
             }
         }
+    }
+
+    private Task<Optional<String>> createFetchPlateNumberTask(String pesel) {
+        return new Task<>() {
+            @Override
+            protected Optional<String> call() {
+                return guestService.findRegistrationPlateNumberByPesel(pesel);
+            }
+        };
+    }
+
+    private void fetchPlateNumberWithRetries(int retries, long delayInMillis) {
+        Task<Optional<String>> fetchPlateNumberTask = createFetchPlateNumberTask(guestPesel);
+        fetchPlateNumberTask.setOnSucceeded(event -> {
+            Optional<String> registrationPlateNumber = fetchPlateNumberTask.getValue();
+            if (registrationPlateNumber.isPresent()) {
+                registrationPlateNumberField.setText(registrationPlateNumber.orElse(""));
+            } else if (retries > 0) {
+                scheduleFetchPlateNumberWithRetries(retries - 1, delayInMillis);
+            }
+        });
+        fetchPlateNumberTask.setOnFailed(event -> {
+            if (retries > 0) {
+                scheduleFetchPlateNumberWithRetries(retries - 1, delayInMillis);
+            } else {
+                Throwable e = fetchPlateNumberTask.getException();
+                log.error("Error while fetching registration plate number", e);
+                AlertPopper.showErrorAlert("Error while fetching registration plate number: " + e.getMessage());
+            }
+        });
+        if (registrationPlateNumberField.getText().isEmpty()) {
+            registrationPlateNumberField.setText("Fetching...");
+        } else {
+            log.info("Registration plate number already fetched");
+        }
+        new Thread(fetchPlateNumberTask).start();
+    }
+
+    private void scheduleFetchPlateNumberWithRetries(int retries, long delayInMillis) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delayInMillis);
+                fetchPlateNumberWithRetries(retries, delayInMillis);
+            } catch (InterruptedException e) {
+                log.error("Error while scheduling fetch plate number retries", e);
+            }
+        }).start();
     }
 
     private void setReservationStatus(ActionEvent actionEvent) {

@@ -70,7 +70,7 @@ public class ReservationsViewController {
     }
 
     public List<ReservationView> getReservationViews(String pesel) {
-        List<Reservation> reservations = reservationService.getGuestReservations(pesel);
+        List<Reservation> reservations = reservationService.getGuestReservationsNotDeleted(pesel);
         return reservations.stream()
                 .map(reservation -> new ReservationView(
                         reservation.getId(),

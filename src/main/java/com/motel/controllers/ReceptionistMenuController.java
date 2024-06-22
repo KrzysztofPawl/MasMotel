@@ -114,27 +114,27 @@ public class ReceptionistMenuController {
 
         searchGuestReservationButton.setOnAction(event -> {
             openGuestReservationsView();
-            clearFieldsAfter2Seconds();
+            clearFieldsAfter1Second();
         });
 
         createReservationButton.setOnAction(actionEvent -> {
             createReservation();
-            clearFieldsAfter2Seconds();
+            clearFieldsAfter1Second();
         });
 
         viewReservationDetailsSearchButton.setOnAction(actionEvent -> {
             viewReservationDetails();
-            clearFieldsAfter2Seconds();
+            clearFieldsAfter1Second();
         });
 
         modifyReservationSearchButton.setOnAction(actionEvent -> {
             openModifyReservationView();
-            clearFieldsAfter2Seconds();
+            clearFieldsAfter1Second();
         });
 
         deleteReservationDeleteButton.setOnAction(actionEvent -> {
             deleteReservation();
-            clearFieldsAfter2Seconds();
+            clearFieldsAfter1Second();
         });
 
         menuHelpItem.setOnAction(event -> InfoPopper.showInfo("Help", "Help"));
@@ -191,7 +191,7 @@ public class ReceptionistMenuController {
             stage.setResizable(false);
             stage.show();
         } catch (Exception e) {
-            log.error("Error while opening Guest Reservations View", e);
+            log.error("Error while opening Guest Reservations View");
             AlertPopper.showErrorAlert("Error while opening Guest Reservations View: " + e.getMessage());
         }
     }
@@ -200,11 +200,19 @@ public class ReceptionistMenuController {
     private void viewReservationDetails() {
         try {
             String reservationId = viewReservationDetailsIdField.getText();
+
+            int id = parseId(reservationId);
+            if (id == -1) {
+                return;
+            }
             if (validateReservationId(reservationId)) {
                 return;
             }
-
-            int id = parseId(reservationId);
+            if (reservationService.getReservationById(id).isDeleted()) {
+                log.error("Reservation with ID " + id + " is deleted");
+                AlertPopper.showErrorAlert("Reservation with ID " + id + " is deleted");
+                return;
+            }
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ReservationDetailsView.fxml"));
             loader.setControllerFactory(MotelSystemApplication.getContext()::getBean);
@@ -257,12 +265,11 @@ public class ReceptionistMenuController {
     private void deleteReservation() {
         try {
             String reservationId = deleteReservationIdField.getText();
-            if (validateReservationId(reservationId)) {
-                return;
-            }
-
             int id = parseId(reservationId);
             if (id == -1) {
+                return;
+            }
+            if (validateReservationId(reservationId)) {
                 return;
             }
 
@@ -281,7 +288,7 @@ public class ReceptionistMenuController {
             AlertPopper.showErrorAlert("Please enter reservation ID");
             return true;
         }
-        if (!reservationService.existsById(Integer.parseInt(id))) {
+        if (!reservationService.existsById(parseId(id))) {
             log.error("Reservation with ID " + id + " does not exist");
             AlertPopper.showErrorAlert("Reservation with ID " + id + " does not exist");
             return true;
@@ -313,11 +320,11 @@ public class ReceptionistMenuController {
         return false;
     }
 
-    private void clearFieldsAfter2Seconds() {
+    private void clearFieldsAfter1Second() {
         log.info("Clearing fields after 2 seconds");
         new Thread(() -> {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 clearFields();
                 log.info("Fields cleared");
             } catch (InterruptedException e) {
