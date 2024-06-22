@@ -20,4 +20,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
     @NonNull
     Invoice save(@NonNull Invoice invoice);
+
+
 }

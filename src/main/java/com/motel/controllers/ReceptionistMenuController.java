@@ -132,6 +132,11 @@ public class ReceptionistMenuController {
             clearFieldsAfter2Seconds();
         });
 
+        deleteReservationDeleteButton.setOnAction(actionEvent -> {
+            deleteReservation();
+            clearFieldsAfter2Seconds();
+        });
+
         menuHelpItem.setOnAction(event -> InfoPopper.showInfo("Help", "Help"));
         menuClearItem.setOnAction(event -> clearFields());
     }
@@ -248,6 +253,28 @@ public class ReceptionistMenuController {
     private void setAdditionalServiceStatusChoiceBox(ActionEvent actionEvent) {
         AdditionalServiceStatus additionalServiceStatus = additionalServiceStatusChoiceBox.getValue();
     }
+
+    private void deleteReservation() {
+        try {
+            String reservationId = deleteReservationIdField.getText();
+            if (validateReservationId(reservationId)) {
+                return;
+            }
+
+            int id = parseId(reservationId);
+            if (id == -1) {
+                return;
+            }
+
+            reservationService.markReservationAsDeletedAndDeleteInvoices(id);
+            InfoPopper.showInfo("Reservation deleted!","Reservation with ID " + id +
+                    " has been deleted, and associated invoices have been removed.");
+        } catch (Exception e) {
+            log.error("Error while deleting reservation", e);
+            AlertPopper.showErrorAlert("Error while deleting reservation: " + e.getMessage());
+        }
+    }
+
     private boolean validateReservationId(String id) {
         if (id == null || id.trim().isEmpty()) {
             log.error("Reservation ID is empty");

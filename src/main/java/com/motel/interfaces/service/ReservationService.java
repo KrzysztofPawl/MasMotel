@@ -10,6 +10,6 @@ public interface ReservationService {
     Reservation getReservationById(int id);
     List<Reservation> getGuestReservations(String pesel);
     Reservation changeReservationStatus(int id, ReservationStatus status);
-    void deleteReservation(int id);
     boolean existsById(int id);
+    void markReservationAsDeletedAndDeleteInvoices(int id);
 }

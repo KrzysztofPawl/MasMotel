@@ -46,8 +46,4 @@ public class Invoice {
         this.paymentMethod = paymentMethod;
     }
 
-    public void markAsCanceled() {
-        this.status = InvoiceStatus.CANCELED;
-    }
-
 }

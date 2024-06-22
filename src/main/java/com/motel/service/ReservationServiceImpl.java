@@ -1,6 +1,9 @@
 package com.motel.service;
 
 import com.motel.exception.DataNotFoundException;
+import com.motel.interfaces.service.InvoiceService;
+import com.motel.model.Invoice;
+import com.motel.repositories.InvoiceRepository;
 import com.motel.repositories.ReservationRepository;
 import com.motel.interfaces.service.ReservationService;
 import com.motel.model.Reservation;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,6 +22,8 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final InvoiceService invoiceService;
 
     @Override
     @Transactional
@@ -61,11 +67,24 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void deleteReservation(int id) {
+    @Transactional
+    public void markReservationAsDeletedAndDeleteInvoices(int id) {
         var reservation = getReservationById(id);
+        if (reservation.isDeleted()) {
+            log.warn("Reservation already deleted: {}", id);
+            throw new IllegalStateException("Reservation already deleted: " + id);
+        }
         reservation.markAsDeleted();
+
+        List<Invoice> invoices = reservation.getInvoices().stream().toList();
+        for (Invoice invoice : invoices) {
+            reservation.getInvoices().remove(invoice);
+            invoiceRepository.delete(invoice);
+            log.info("Invoice deleted: {}", invoice.getId());
+        }
+
+        invoiceRepository.deleteAll(invoices);
         reservationRepository.save(reservation);
-        log.info("Reservation deleted: {}", id);
     }
 
     @Override
